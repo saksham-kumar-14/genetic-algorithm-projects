@@ -1,5 +1,6 @@
 import pygame
 import math 
+from DNA import DNA
 
 class Bar:
     def __init__(self, x, y, init_acc, g):
@@ -32,6 +33,18 @@ class Bar:
         self.vel = 0
         self.angular_acc = 0
         self.acc = init_acc # this acceleration is for x axis only
+
+        # Reinforcement specific parameters
+        self.dna = DNA()
+        self.fitness = self.calculate_fitness()
+
+    def calculate_fitness(self):
+        error = 0 
+        for i in range(len(self.dna.actions)):
+            ang = ((i + 1) *  math.pi / len(self.dna.actions)) - (0.5 * math.pi)
+            error += abs(self.dna.actions[i] - (self.g * math.tan(ang)))
+
+        return ((2 * self.dna.max_capability) - error) / (2 * self.dna.max_capability)
 
     def rotate(self, pts):
         rotated = []
@@ -68,12 +81,25 @@ class Bar:
         self.angular_vel += self.angular_acc
         self.change_angle(self.angular_vel + (0.5 * self.angular_acc))
 
+        # Reinforcement params 
+        self.fitness = self.calculate_fitness()
+
     def change_angle(self, dt):
         self.__angle += dt
         if self.__angle > math.pi / 2:
             self.__angle = math.pi / 2 
         elif self.__angle < -math.pi / 2:
             self.__angle =  -math.pi / 2
+
+
+    def self_change_of_acc(self):
+        n = len(self.dna.actions)
+        idx = (self.__angle + (math.pi * 0.5)) * n / math.pi 
+        idx = int(idx)
+        if idx == n:
+            idx = n - 1 
+
+        self.acc = self.dna.actions[idx]
 
 
     def draw(self, screen, base_color, bar_color, pin_color):

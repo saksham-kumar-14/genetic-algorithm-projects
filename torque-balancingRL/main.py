@@ -19,6 +19,7 @@ def main():
 
     running = True
     bar = Bar(WIDTH // 2, X_LINE, 2, G)
+    print(bar.dna.actions)
               
     while running:
 
@@ -30,6 +31,7 @@ def main():
         pygame.draw.line(SCREEN, BLACK, (0, X_LINE), (WIDTH, X_LINE), 2)
         bar.draw(screen = SCREEN, base_color = BLACK, bar_color = BROWN, pin_color = WHITE)
         bar.change_dynamic_params()
+        bar.self_change_of_acc()
 
         CLOCK.tick(FPS)
         pygame.display.flip()
