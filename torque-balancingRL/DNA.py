@@ -15,5 +15,9 @@ class DNA:
             self.actions.append(x)
 
     def evolution(self, new_action, idx):
+        # idx = ((angle + math.pi*0.5) / math.pi ) * self.n_actions
+        # idx = int(idx)
+        # if idx >= self.n_actions:
+        #     idx = self.n_actions - 1 
         self.actions[idx] = new_action
 

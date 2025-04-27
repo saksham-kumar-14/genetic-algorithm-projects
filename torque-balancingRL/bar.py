@@ -32,11 +32,15 @@ class Bar:
         self.angular_vel = 0
         self.vel = 0
         self.angular_acc = 0
+        self.__init_x = x 
+        self.__init_y = y 
+        self.__init_acc = init_acc
         self.acc = init_acc # this acceleration is for x axis only
 
         # Reinforcement specific parameters
         self.dna = DNA()
         self.fitness = self.calculate_fitness()
+        self.fallen = False
 
     def calculate_fitness(self):
         error = 0 
@@ -86,9 +90,11 @@ class Bar:
 
     def change_angle(self, dt):
         self.__angle += dt
-        if self.__angle > math.pi / 2:
+        if self.__angle >= math.pi / 2:
+            self.fallen = True 
             self.__angle = math.pi / 2 
-        elif self.__angle < -math.pi / 2:
+        elif self.__angle <= -math.pi / 2:
+            self.fallen = True
             self.__angle =  -math.pi / 2
 
 
@@ -115,6 +121,46 @@ class Bar:
         pygame.draw.circle(screen, pin_color, (self.x, self.y), self.__radius)
 
 
+    def reproduce(self, parent):
+        
+        child = Bar(self.__init_x, self.__init_y, self.__init_acc, self.g)
+        dt = math.pi / child.dna.actions
 
+        for i in range(child.dna.n_actions):
+            if i  < child.dna.n_actions / 2:
+                if self.dna.actions[i] < 0 and parent.dna.actions[i] > 0:
+                    child.dna.actions[i] = self.dna.actions[i] 
+                elif self.dna.actions[i] > 0 and parent.dna.actions[i] < 0:
+                    child.dna.actions[i] = parent.dna.actions[i]
+                elif self.dna.actions[i] > 0 and parent.dna.actions[i] > 0:
+                    if parent.dna.actions[i] > self.dna.actions[i]:
+                        child.dna.actions[i] = parents.dna.actions[i]
+                    else:
+                        child.dna.actions[i] = self.dna.actions[i]
+                else:
+                    if parents.dna.actions[i] > self.dna.actions[i]:
+                        child.dna.actions[i] = self.dna.actions[i]
+                    else:
+                        child.dna.actions[i] = parents.dna.actions[i]
+            else:
+                if self.dna.actions[i] < 0 and parent.dna.actions[i] > 0:
+                    child.dna.actions[i] = parent.dna.actions[i] 
+                elif self.dna.actions[i] > 0 and parent.dna.actions[i] < 0:
+                    child.dna.actions[i] = self.dna.actions[i]
+                elif self.dna.actions[i] > 0 and parent.dna.actions[i] > 0:
+                    if parents.dna.actions[i] > self.dna.actions[i]:
+                        child.dna.actions[i] = self.dna.actions[i]
+                    else:
+                        child.dna.actions[i] = parents.dna.actions[i]
+                else:
+                    if parent.dna.actions[i] > self.dna.actions[i]:
+                        child.dna.actions[i] = parents.dna.actions[i]
+                    else:
+                        child.dna.actions[i] = self.dna.actions[i]
+
+
+
+            child.dna.actions[i] = mutate_dna(child.dna.actions[i])
+            child.dna.evolution(action, i)
 
 

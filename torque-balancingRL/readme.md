@@ -6,3 +6,7 @@
 - might change the definition of fitness 
     - fitness may be calculated such that minimum force is applied at angles to keep it balanced at center of mass wth minimal application of force
 - still need to figure out how to breed to product offspring with healthier DNA of the two
+
+****** NEW UPDATES **********
+- Still a lot to improve upon .....
+- Maybe look at the ps once more
